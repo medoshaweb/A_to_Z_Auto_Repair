@@ -1,10 +1,10 @@
-# ABE Garage - Full Stack Application
+# A to Z Auto Repair - Full Stack Application
 
-A full-stack web application for ABE Garage with React frontend and Node.js/Express backend with MySQL database.
+A full-stack web application for A to z Auto Repair with React frontend and Node.js/Express backend with MySQL database.
 
 ## Features
 
-- Modern, responsive design matching the ABE Garage branding
+- Modern, responsive design matching the A to Z Auto Repair branding
 - User authentication (Login/Register)
 - Secure password hashing with bcrypt
 - JWT token-based authentication
@@ -66,7 +66,7 @@ A full-stack web application for ABE Garage with React frontend and Node.js/Expr
 ### Prerequisites
 - Node.js (v14 or higher)
 - MySQL (v5.7 or higher)
-- npm or yarn
+- npm 
 
 ### Backend Setup
 
