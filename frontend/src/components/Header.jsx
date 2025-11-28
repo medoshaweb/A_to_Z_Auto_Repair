@@ -36,7 +36,7 @@ const Header = () => {
           <div className="logo-section">
             <div className="logo-icon">
                 <img
-                  src="../../public/image/car_logo5.png"
+                  src="/image/car_logo5.png"
                   alt="car_logo"
                   width="300"
                   height="70"
