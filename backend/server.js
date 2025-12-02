@@ -15,21 +15,10 @@ app.use(express.urlencoded({ extended: true }));
 initDatabase().catch(console.error);
 
 // Routes
-<<<<<<< HEAD
-const authRoutes = require('./routes/auth');
-const customerRoutes = require('./routes/customers');
-const orderRoutes = require('./routes/orders');
-const serviceRoutes = require('./routes/services');
-app.use('/api/auth', authRoutes);
-app.use('/api/customers', customerRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/services', serviceRoutes);
-=======
 const authRoutes = require("./routes/auth");
 const customerRoutes = require("./routes/customers");
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", customerRoutes);
->>>>>>> 2f7ad10cf199033b9e09c76b0bdcbdfb1b4cf8aa
 
 // Health check route
 app.get("/api/health", (req, res) => {

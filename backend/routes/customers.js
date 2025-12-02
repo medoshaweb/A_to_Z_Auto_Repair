@@ -1,15 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const pool = require('../config/database');
+const pool = require("../config/database");
 
 // Get all customers with search and pagination
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
 
-    let query = 'SELECT * FROM customers';
-    let countQuery = 'SELECT COUNT(*) as total FROM customers';
+    let query = "SELECT * FROM customers";
+    let countQuery = "SELECT COUNT(*) as total FROM customers";
     const params = [];
 
     if (search) {
@@ -21,7 +21,11 @@ router.get('/', async (req, res) => {
 
     query += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`;
 
-    const [customers] = await pool.execute(query, [...params, parseInt(limit), parseInt(offset)]);
+    const [customers] = await pool.execute(query, [
+      ...params,
+      parseInt(limit),
+      parseInt(offset),
+    ]);
     const [countResult] = await pool.execute(countQuery, params);
     const total = countResult[0].total;
 
@@ -31,119 +35,210 @@ router.get('/', async (req, res) => {
         total,
         page: parseInt(page),
         limit: parseInt(limit),
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
-    console.error('Get customers error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Get customers error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 // Get single customer by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const [customers] = await pool.execute('SELECT * FROM customers WHERE id = ?', [id]);
+    const [customers] = await pool.execute(
+      "SELECT * FROM customers WHERE id = ?",
+      [id]
+    );
 
     if (customers.length === 0) {
-      return res.status(404).json({ message: 'Customer not found' });
+      return res.status(404).json({ message: "Customer not found" });
     }
 
     res.json({ customer: customers[0] });
   } catch (error) {
-    console.error('Get customer error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Get customer error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 // Create new customer
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { email, first_name, last_name, phone, is_active } = req.body;
 
     if (!email || !first_name || !last_name) {
-      return res.status(400).json({ message: 'Email, first name, and last name are required' });
+      return res
+        .status(400)
+        .json({ message: "Email, first name, and last name are required" });
     }
 
     // Check if email already exists
-    const [existing] = await pool.execute('SELECT * FROM customers WHERE email = ?', [email]);
+    const [existing] = await pool.execute(
+      "SELECT * FROM customers WHERE email = ?",
+      [email]
+    );
     if (existing.length > 0) {
-      return res.status(400).json({ message: 'Customer with this email already exists' });
+      return res
+        .status(400)
+        .json({ message: "Customer with this email already exists" });
     }
 
     const [result] = await pool.execute(
-      'INSERT INTO customers (email, first_name, last_name, phone, is_active) VALUES (?, ?, ?, ?, ?)',
-      [email, first_name, last_name, phone || null, is_active !== undefined ? is_active : true]
+      "INSERT INTO customers (email, first_name, last_name, phone, is_active) VALUES (?, ?, ?, ?, ?)",
+      [
+        email,
+        first_name,
+        last_name,
+        phone || null,
+        is_active !== undefined ? is_active : true,
+      ]
     );
 
-    const [newCustomer] = await pool.execute('SELECT * FROM customers WHERE id = ?', [result.insertId]);
+    const [newCustomer] = await pool.execute(
+      "SELECT * FROM customers WHERE id = ?",
+      [result.insertId]
+    );
 
     res.status(201).json({
-      message: 'Customer created successfully',
-      customer: newCustomer[0]
+      message: "Customer created successfully",
+      customer: newCustomer[0],
     });
   } catch (error) {
-    console.error('Create customer error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Create customer error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 // Update customer
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { email, first_name, last_name, phone, is_active } = req.body;
 
     if (!email || !first_name || !last_name) {
-      return res.status(400).json({ message: 'Email, first name, and last name are required' });
+      return res
+        .status(400)
+        .json({ message: "Email, first name, and last name are required" });
     }
 
     // Check if customer exists
-    const [existing] = await pool.execute('SELECT * FROM customers WHERE id = ?', [id]);
+    const [existing] = await pool.execute(
+      "SELECT * FROM customers WHERE id = ?",
+      [id]
+    );
     if (existing.length === 0) {
-      return res.status(404).json({ message: 'Customer not found' });
+      return res.status(404).json({ message: "Customer not found" });
     }
 
     // Check if email is being changed and if new email already exists
     if (email !== existing[0].email) {
-      const [emailCheck] = await pool.execute('SELECT * FROM customers WHERE email = ? AND id != ?', [email, id]);
+      const [emailCheck] = await pool.execute(
+        "SELECT * FROM customers WHERE email = ? AND id != ?",
+        [email, id]
+      );
       if (emailCheck.length > 0) {
-        return res.status(400).json({ message: 'Customer with this email already exists' });
+        return res
+          .status(400)
+          .json({ message: "Customer with this email already exists" });
       }
     }
 
     await pool.execute(
-      'UPDATE customers SET email = ?, first_name = ?, last_name = ?, phone = ?, is_active = ? WHERE id = ?',
-      [email, first_name, last_name, phone || null, is_active !== undefined ? is_active : true, id]
+      "UPDATE customers SET email = ?, first_name = ?, last_name = ?, phone = ?, is_active = ? WHERE id = ?",
+      [
+        email,
+        first_name,
+        last_name,
+        phone || null,
+        is_active !== undefined ? is_active : true,
+        id,
+      ]
     );
 
-    const [updated] = await pool.execute('SELECT * FROM customers WHERE id = ?', [id]);
+    const [updated] = await pool.execute(
+      "SELECT * FROM customers WHERE id = ?",
+      [id]
+    );
 
     res.json({
-      message: 'Customer updated successfully',
-      customer: updated[0]
+      message: "Customer updated successfully",
+      customer: updated[0],
     });
   } catch (error) {
-    console.error('Update customer error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Update customer error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 // Get customer vehicles
-router.get('/:id/vehicles', async (req, res) => {
+router.get("/:id/vehicles", async (req, res) => {
   try {
     const { id } = req.params;
-    const [vehicles] = await pool.execute('SELECT * FROM vehicles WHERE customer_id = ?', [id]);
+    const [vehicles] = await pool.execute(
+      "SELECT * FROM vehicles WHERE customer_id = ?",
+      [id]
+    );
     res.json({ vehicles });
   } catch (error) {
-    console.error('Get customer vehicles error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Get customer vehicles error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Create new vehicle for customer
+router.post("/:id/vehicles", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { make, model, year, vin, license_plate, color, mileage } = req.body;
+
+    // Validate customer exists
+    const [customers] = await pool.execute(
+      "SELECT * FROM customers WHERE id = ?",
+      [id]
+    );
+    if (customers.length === 0) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    // Validate required fields
+    if (!make || !model) {
+      return res.status(400).json({ message: "Make and model are required" });
+    }
+
+    const [result] = await pool.execute(
+      "INSERT INTO vehicles (customer_id, make, model, year, vin, license_plate, color, mileage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        id,
+        make,
+        model,
+        year || null,
+        vin || null,
+        license_plate || null,
+        color || null,
+        mileage || null,
+      ]
+    );
+
+    const [newVehicle] = await pool.execute(
+      "SELECT * FROM vehicles WHERE id = ?",
+      [result.insertId]
+    );
+
+    res.status(201).json({
+      message: "Vehicle created successfully",
+      vehicle: newVehicle[0],
+    });
+  } catch (error) {
+    console.error("Create vehicle error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 // Get customer orders
-router.get('/:id/orders', async (req, res) => {
+router.get("/:id/orders", async (req, res) => {
   try {
     const { id } = req.params;
     const [orders] = await pool.execute(
@@ -156,10 +251,9 @@ router.get('/:id/orders', async (req, res) => {
     );
     res.json({ orders });
   } catch (error) {
-    console.error('Get customer orders error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Get customer orders error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 module.exports = router;
-
