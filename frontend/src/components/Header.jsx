@@ -1,16 +1,24 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Header.css';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Header.css";
 
 const Header = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
-  const isAdmin = user !== null;
+  const adminUser = JSON.parse(localStorage.getItem("user") || "null");
+  const customer = JSON.parse(localStorage.getItem("customer") || "null");
+  const isAdmin = adminUser !== null;
+  const isCustomer = customer !== null;
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/');
+  const handleAdminLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
+  const handleCustomerLogout = () => {
+    localStorage.removeItem("customerToken");
+    localStorage.removeItem("customer");
+    navigate("/");
   };
 
   return (
@@ -35,12 +43,12 @@ const Header = () => {
         <div className="nav-container">
           <div className="logo-section">
             <div className="logo-icon">
-                <img
-                  src="/image/car_logo5.png"
-                  alt="car_logo"
-                  width="300"
-                  height="70"
-               />
+              <img
+                src="/image/car_logo5.png"
+                alt="car_logo"
+                width="300"
+                height="70"
+              />
             </div>
           </div>
           <div className="nav-links">
@@ -61,15 +69,36 @@ const Header = () => {
                 ADMIN
               </Link>
             )}
+            {isCustomer && (
+              <Link to="/customer/dashboard" className="nav-link">
+                MY ACCOUNT
+              </Link>
+            )}
             <span className="nav-separator">|</span>
             {isAdmin ? (
-              <button className="logout-btn" onClick={handleLogout}>
+              <button className="logout-btn" onClick={handleAdminLogout}>
+                LOG OUT
+              </button>
+            ) : isCustomer ? (
+              <button className="logout-btn" onClick={handleCustomerLogout}>
                 LOG OUT
               </button>
             ) : (
-              <button className="sign-in-btn" onClick={() => navigate("/")}>
-                SIGN IN
-              </button>
+              <>
+                <button
+                  className="sign-in-btn"
+                  onClick={() => navigate("/customer/login")}
+                >
+                  CUSTOMER LOGIN
+                </button>
+                <button
+                  className="sign-in-btn"
+                  onClick={() => navigate("/admin/login")}
+                  style={{ marginLeft: "10px" }}
+                >
+                  ADMIN LOGIN
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -79,4 +108,3 @@ const Header = () => {
 };
 
 export default Header;
-

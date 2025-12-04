@@ -1,45 +1,51 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './LoginForm.css';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import "./LoginForm.css";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
-    setError('');
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
-      
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        formData
+      );
+
       // Store token in localStorage
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
       // Show success message
-      alert('Login successful!');
-      
+      alert("Login successful!");
+
       // Reset form
-      setFormData({ email: '', password: '' });
-      
+      setFormData({ email: "", password: "" });
+
       // Redirect to dashboard
-      window.location.href = '/admin/dashboard';
+      window.location.href = "/admin/dashboard";
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -76,12 +82,31 @@ const LoginForm = () => {
               className="form-input"
             />
           </div>
-          <button 
-            type="submit" 
-            className="login-button"
-            disabled={loading}
-          >
-            {loading ? 'LOGGING IN...' : 'LOGIN'}
+          <div style={{ textAlign: "right", marginBottom: "15px" }}>
+            <Link
+              to="/admin/forgot-password"
+              style={{
+                fontSize: "14px",
+                color: "#dc143c",
+                textDecoration: "none",
+              }}
+            >
+              Forgot Password?
+            </Link>
+            <span style={{ margin: "0 10px", color: "#ccc" }}>|</span>
+            <Link
+              to="/admin/forgot-username"
+              style={{
+                fontSize: "14px",
+                color: "#dc143c",
+                textDecoration: "none",
+              }}
+            >
+              Forgot Username?
+            </Link>
+          </div>
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? "LOGGING IN..." : "LOGIN"}
           </button>
         </form>
       </div>
@@ -90,4 +115,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
