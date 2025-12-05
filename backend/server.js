@@ -12,7 +12,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Initialize database
-initDatabase().catch(console.error);
+initDatabase()
+  .then(() => {
+    console.log("✅ Database connection established");
+  })
+  .catch((error) => {
+    console.error("\n⚠️  Warning: Database initialization failed");
+    console.error(
+      "   The server will continue to run, but database operations may fail."
+    );
+    console.error(
+      "   Please fix the database connection and restart the server.\n"
+    );
+    // Don't exit - allow server to start even if DB init fails
+  });
 
 // Routes
 const authRoutes = require("./routes/auth");
@@ -35,6 +48,23 @@ app.get("/api/health", (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+// Handle server errors
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`\n❌ Error: Port ${PORT} is already in use.`);
+    console.error(`Please either:`);
+    console.error(`  1. Stop the process using port ${PORT}`);
+    console.error(`  2. Set a different PORT in your .env file`);
+    console.error(`\nTo find and kill the process on Windows:`);
+    console.error(`  netstat -ano | findstr :${PORT}`);
+    console.error(`  taskkill //F //PID <PID_NUMBER>\n`);
+    process.exit(1);
+  } else {
+    console.error("Server error:", error);
+    process.exit(1);
+  }
 });

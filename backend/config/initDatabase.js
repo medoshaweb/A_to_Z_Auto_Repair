@@ -3,26 +3,50 @@ require("dotenv").config();
 
 async function initDatabase() {
   let connection;
+  const dbName = process.env.DB_NAME || "A_to_Z_Auto_Repair";
+  const dbHost = process.env.DB_HOST || "localhost";
+  const dbPort = process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306;
+  const dbUser = process.env.DB_USER || "root";
+  const dbPassword = process.env.DB_PASSWORD || "";
+
   try {
-    // Connect without selecting a database first
-    connection = await mysql.createConnection({
-      host: process.env.DB_HOST || "localhost",
-      user: process.env.DB_USER || "root",
-      password: process.env.DB_PASSWORD || "",
-    });
-
-    // Create database if it doesn't exist
-    await connection.query(
-      `CREATE DATABASE IF NOT EXISTS ${
-        process.env.DB_NAME || "A_to_Z_Auto_Repair"
-      }`
-    );
-    console.log("Database created or already exists");
-
-    // Switch to the database
-    await connection.query(
-      `USE ${process.env.DB_NAME || "A_to_Z_Auto_Repair"}`
-    );
+    // Try to connect directly to the database first (for existing databases)
+    try {
+      connection = await mysql.createConnection({
+        host: dbHost,
+        port: dbPort,
+        user: dbUser,
+        password: dbPassword,
+        database: dbName,
+      });
+      console.log(`✅ Connected to existing database: ${dbName}`);
+    } catch (connectError) {
+      // If database doesn't exist, create it
+      if (connectError.code === "ER_BAD_DB_ERROR") {
+        console.log(`Database ${dbName} not found, creating it...`);
+        // Connect without database
+        connection = await mysql.createConnection({
+          host: dbHost,
+          port: dbPort,
+          user: dbUser,
+          password: dbPassword,
+        });
+        // Create database
+        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+        console.log(`✅ Database ${dbName} created`);
+        // Close and reconnect with database
+        await connection.end();
+        connection = await mysql.createConnection({
+          host: dbHost,
+          port: dbPort,
+          user: dbUser,
+          password: dbPassword,
+          database: dbName,
+        });
+      } else {
+        throw connectError;
+      }
+    }
 
     // Create users table
     await connection.query(`
@@ -301,9 +325,40 @@ async function initDatabase() {
       console.log("Default services inserted");
     }
 
-    console.log("Database initialization completed");
+    console.log("✅ Database initialization completed");
   } catch (error) {
-    console.error("Error initializing database:", error);
+    if (error.code === "ECONNREFUSED") {
+      console.error(
+        "\n❌ Database Connection Error: Cannot connect to MySQL server"
+      );
+      console.error(`   Host: ${dbHost}`);
+      console.error(`   Port: ${dbPort}`);
+      console.error(`   User: ${dbUser}`);
+      console.error("\n   Possible solutions:");
+      console.error("   1. Make sure MySQL server is running");
+      console.error("   2. Check your database credentials in .env file");
+      console.error("   3. Verify the MySQL port is correct");
+      console.error("\n   Create a .env file with:");
+      console.error(`   DB_HOST=${dbHost}`);
+      console.error(`   DB_PORT=${dbPort}`);
+      console.error(`   DB_USER=${dbUser}`);
+      console.error(`   DB_PASSWORD=${dbPassword || "(empty)"}`);
+      console.error(`   DB_NAME=${dbName}\n`);
+    } else if (error.code === "ER_ACCESS_DENIED_ERROR") {
+      console.error(
+        "\n❌ Database Authentication Error: Invalid username or password"
+      );
+      console.error(`   User: ${dbUser}`);
+      console.error(
+        "   Please check your DB_USER and DB_PASSWORD in .env file\n"
+      );
+    } else if (error.code === "ER_BAD_DB_ERROR") {
+      console.error("\n❌ Database Error: Database does not exist");
+      console.error(`   Database: ${dbName}\n`);
+    } else {
+      console.error("\n❌ Error initializing database:", error.message);
+      console.error("   Error code:", error.code || "Unknown");
+    }
     throw error;
   } finally {
     if (connection) {
