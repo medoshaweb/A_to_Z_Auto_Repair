@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./SignupForm.css"; // Reuse styles
 
 const CustomerSignupForm = () => {
@@ -15,6 +16,8 @@ const CustomerSignupForm = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -134,9 +137,9 @@ const CustomerSignupForm = () => {
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group password-input-wrapper">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password"
             value={formData.password}
@@ -144,11 +147,18 @@ const CustomerSignupForm = () => {
             required
             className="form-input"
           />
+          <button
+            type="button"
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
         </div>
 
-        <div className="form-group">
+        <div className="form-group password-input-wrapper">
           <input
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             name="confirmPassword"
             placeholder="Confirm Password"
             value={formData.confirmPassword}
@@ -156,6 +166,13 @@ const CustomerSignupForm = () => {
             required
             className="form-input"
           />
+          <button
+            type="button"
+            className="password-toggle"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          >
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
         </div>
 
         <button type="submit" className="submit-button" disabled={loading}>

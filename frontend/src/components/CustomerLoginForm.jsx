@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./LoginForm.css"; // Reuse styles
 
 const CustomerLoginForm = () => {
@@ -12,6 +13,7 @@ const CustomerLoginForm = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -69,9 +71,9 @@ const CustomerLoginForm = () => {
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group password-input-wrapper">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Your Password"
             value={formData.password}
@@ -79,6 +81,13 @@ const CustomerLoginForm = () => {
             required
             className="form-input"
           />
+          <button
+            type="button"
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
         </div>
         <div style={{ textAlign: "right", marginBottom: "15px" }}>
           <Link

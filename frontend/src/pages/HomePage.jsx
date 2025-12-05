@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { GiFlatTire } from "react-icons/gi";
 import { FaCarBattery } from "react-icons/fa";
+import shopImage from "../assets/images/shop.png"; // Add this import
 import "./HomePage.css";
 
 const HomePage = () => {
@@ -83,7 +84,7 @@ const HomePage = () => {
             </div>
             <div className="about-image">
               <div className="image-placeholder">
-                <span>Auto Repair Image</span>
+                <img src={shopImage} alt="Auto Shop" className="shop-image" />
               </div>
             </div>
           </div>
@@ -123,7 +124,9 @@ const HomePage = () => {
               </p>
             </div>
             <div className="service-card">
-              <div className="service-icon"><FaCarBattery /></div>
+              <div className="service-icon">
+                <FaCarBattery />
+              </div>
               <h3>Battery & Electrical</h3>
               <p>
                 Complete electrical system diagnostics, battery replacement, and
@@ -131,7 +134,8 @@ const HomePage = () => {
               </p>
             </div>
             <div className="service-card">
-              <div className="service-icon"><GiFlatTire />
+              <div className="service-icon">
+                <GiFlatTire />
               </div>
               <h3>Tire & Wheel Service</h3>
               <p>
@@ -172,7 +176,7 @@ const HomePage = () => {
                 <div className="contact-icon">📞</div>
                 <div>
                   <h3>Phone</h3>
-                  <p>Call Abe: 1800 456 7890</p>
+                  <p>Call A to Z: 1800 456 7890</p>
                 </div>
               </div>
               <div className="contact-item">

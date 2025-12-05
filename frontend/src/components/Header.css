@@ -18,11 +18,25 @@
   transition: background-color 0.3s ease;
 }
 
+.top-bar-left-section {
+  display: flex;
+  gap: 10px;
+}
+
 .top-bar-left {
   background-color: #dc143c;
   color: #ffffff;
   padding: 6px 20px;
   border-radius: 4px;
+  display: inline-block;
+  gap: 5px;
+}
+.top-bar-left2 {
+  background-color: #1e3a8a;
+  color: #ffffff;
+  padding: 6px 20px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .top-bar-right {

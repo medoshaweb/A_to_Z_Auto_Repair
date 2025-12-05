@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./LoginForm.css";
 
 const ForgotPassword = ({ userType = "admin" }) => {
@@ -15,6 +16,8 @@ const ForgotPassword = ({ userType = "admin" }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetToken, setResetToken] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -203,9 +206,9 @@ const ForgotPassword = ({ userType = "admin" }) => {
                 className="form-input"
               />
             </div>
-            <div className="form-group">
+            <div className="form-group password-input-wrapper">
               <input
-                type="password"
+                type={showNewPassword ? "text" : "password"}
                 name="newPassword"
                 placeholder="New Password"
                 value={formData.newPassword}
@@ -213,10 +216,17 @@ const ForgotPassword = ({ userType = "admin" }) => {
                 required
                 className="form-input"
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+              >
+                {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
-            <div className="form-group">
+            <div className="form-group password-input-wrapper">
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 placeholder="Confirm New Password"
                 value={formData.confirmPassword}
@@ -224,6 +234,13 @@ const ForgotPassword = ({ userType = "admin" }) => {
                 required
                 className="form-input"
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
             <button type="submit" className="login-button" disabled={loading}>
               {loading ? "RESETTING..." : "RESET PASSWORD"}

@@ -8,7 +8,8 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px var(--shadow);
   border: 1px solid var(--border-color);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .login-title {
@@ -74,7 +75,7 @@
   border: 1px solid rgba(198, 40, 40, 0.3);
 }
 
-[data-theme='dark'] .error-message {
+[data-theme="dark"] .error-message {
   background-color: rgba(198, 40, 40, 0.2);
   border-color: rgba(198, 40, 40, 0.4);
 }
@@ -130,4 +131,38 @@
   .login-title {
     font-size: 24px;
   }
+}
+
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper .form-input {
+  padding-right: 45px; /* Space for icon */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+}
+
+.password-toggle:hover {
+  color: #dc143c;
+}
+
+.password-toggle:focus {
+  outline: none;
 }

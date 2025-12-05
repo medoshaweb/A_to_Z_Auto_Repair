@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./LoginForm.css";
 
 const LoginForm = () => {
@@ -10,6 +11,7 @@ const LoginForm = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -71,9 +73,9 @@ const LoginForm = () => {
               className="form-input"
             />
           </div>
-          <div className="form-group">
+          <div className="form-group password-input-wrapper">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               value={formData.password}
@@ -81,6 +83,13 @@ const LoginForm = () => {
               required
               className="form-input"
             />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
           <div style={{ textAlign: "right", marginBottom: "15px" }}>
             <Link

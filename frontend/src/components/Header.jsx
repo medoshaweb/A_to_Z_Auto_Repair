@@ -25,13 +25,18 @@ const Header = () => {
   return (
     <header className="header">
       <div className="top-bar">
+        <div className="top-bar-left-section">
         <div className="top-bar-left">
           <span>Services Beyond Expectation</span>
         </div>
-        <div className="top-bar-right">
+        
+        <div className="top-bar-left2">
           <span>Monday - Saturday 7:00AM - 6:00PM</span>
-          <span className="separator">|</span>
-          <span>Call Abe: 1800 456 7890</span>
+        </div>
+        </div>
+        <div className="top-bar-right">
+          
+          <span>Call A to Z: 1800 456 7890</span>
           {isAdmin && (
             <>
               <span className="separator">|</span>
@@ -45,7 +50,7 @@ const Header = () => {
           <div className="logo-section">
             <div className="logo-icon">
               <img
-                src="/image/Red-and-Blue.png"
+                src="/image/AtoZ.png"
                 alt="car_logo"
                 width="150"
                 height="70"

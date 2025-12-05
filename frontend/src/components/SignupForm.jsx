@@ -1,65 +1,73 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './SignupForm.css';
+import React, { useState } from "react";
+import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import "./SignupForm.css";
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
-    setError('');
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       setLoading(false);
       return;
     }
 
     // Validate password length
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError("Password must be at least 6 characters long");
       setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      });
-      
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+
       // Store token in localStorage
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
       // Show success message
-      alert('Signup successful! You are now logged in.');
-      
+      alert("Signup successful! You are now logged in.");
+
       // Reset form
-      setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-      
+      setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+
       // Redirect to dashboard
-      window.location.href = '/admin/dashboard';
+      window.location.href = "/admin/dashboard";
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Please try again.');
+      setError(
+        err.response?.data?.message || "Signup failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -96,9 +104,9 @@ const SignupForm = () => {
               className="form-input"
             />
           </div>
-          <div className="form-group">
+          <div className="form-group password-input-wrapper">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               value={formData.password}
@@ -107,10 +115,17 @@ const SignupForm = () => {
               minLength="6"
               className="form-input"
             />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
-          <div className="form-group">
+          <div className="form-group password-input-wrapper">
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
               placeholder="Confirm Password"
               value={formData.confirmPassword}
@@ -119,13 +134,16 @@ const SignupForm = () => {
               minLength="6"
               className="form-input"
             />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
-          <button 
-            type="submit" 
-            className="signup-button"
-            disabled={loading}
-          >
-            {loading ? 'SIGNING UP...' : 'SIGN UP'}
+          <button type="submit" className="signup-button" disabled={loading}>
+            {loading ? "SIGNING UP..." : "SIGN UP"}
           </button>
         </form>
       </div>
@@ -134,4 +152,3 @@ const SignupForm = () => {
 };
 
 export default SignupForm;
-
