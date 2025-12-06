@@ -2,6 +2,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 
 .customer-container {
@@ -17,12 +19,14 @@
   align-items: center;
   margin-bottom: 40px;
   padding-bottom: 20px;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--border-color);
+  transition: border-color 0.3s ease;
 }
 
 .customer-header h1 {
-  color: #333;
+  color: var(--text-primary);
   font-size: 2rem;
+  transition: color 0.3s ease;
 }
 
 .logout-btn {
@@ -60,8 +64,9 @@
 }
 
 .empty-message {
-  color: #666;
+  color: var(--text-secondary);
   font-style: italic;
+  transition: color 0.3s ease;
 }
 
 .vehicles-grid {
@@ -71,20 +76,23 @@
 }
 
 .vehicle-card {
-  background-color: white;
+  background-color: var(--bg-primary);
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .vehicle-card h3 {
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 15px;
+  transition: color 0.3s ease;
 }
 
 .vehicle-card p {
   margin: 8px 0;
-  color: #555;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
 }
 
 .orders-list {
@@ -94,10 +102,11 @@
 }
 
 .order-card {
-  background-color: white;
+  background-color: var(--bg-primary);
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .order-header {
@@ -108,8 +117,9 @@
 }
 
 .order-header h3 {
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
+  transition: color 0.3s ease;
 }
 
 .status-badge {
@@ -129,7 +139,7 @@
   color: #f57c00;
 }
 
-[data-theme='dark'] .status-in-progress {
+[data-theme="dark"] .status-in-progress {
   background-color: rgba(245, 124, 0, 0.3);
 }
 
@@ -197,8 +207,9 @@
   max-width: 800px;
   margin: 20px auto;
   padding: 30px;
-  background-color: #f9f9f9;
+  background-color: var(--bg-secondary);
   border-radius: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .form-section {
@@ -221,8 +232,8 @@
   display: flex;
   align-items: flex-start;
   padding: 15px;
-  background-color: white;
-  border: 2px solid #e0e0e0;
+  background-color: var(--bg-primary);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
@@ -253,18 +264,23 @@
 
 .service-description {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-secondary);
   margin: 5px 0 0 0;
+  transition: color 0.3s ease;
 }
 
 .form-textarea {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 16px;
   font-family: inherit;
   box-sizing: border-box;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color 0.3s ease, background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .info-message {
@@ -276,6 +292,6 @@
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 
-[data-theme='dark'] .info-message {
+[data-theme="dark"] .info-message {
   background-color: rgba(255, 193, 7, 0.3);
 }

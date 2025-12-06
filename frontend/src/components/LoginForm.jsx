@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { adminAuthAPI } from "../api";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./LoginForm.css";
 
@@ -27,14 +27,11 @@ const LoginForm = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        formData
-      );
+      const response = await adminAuthAPI.login(formData.email, formData.password);
 
       // Store token in localStorage
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
 
       // Show success message
       alert("Login successful!");
@@ -46,7 +43,7 @@ const LoginForm = () => {
       window.location.href = "/admin/dashboard";
     } catch (err) {
       setError(
-        err.response?.data?.message || "Login failed. Please try again."
+        err.message || "Login failed. Please try again."
       );
     } finally {
       setLoading(false);
