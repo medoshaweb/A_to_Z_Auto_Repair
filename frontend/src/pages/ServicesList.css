@@ -1,3 +1,41 @@
+.services-list-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
+.page-content {
+  display: flex;
+  flex: 1;
+  background-color: var(--bg-secondary);
+  min-height: calc(100vh - 200px);
+  transition: background-color 0.3s ease;
+}
 
+.main-admin-content {
+  flex: 1;
+  padding: 40px;
+  background-color: var(--bg-secondary);
+  transition: background-color 0.3s ease;
+}
 
+.page-title {
+  color: var(--accent-color);
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  position: relative;
+  padding-bottom: 10px;
+  display: inline-block;
+  transition: color 0.3s ease;
+}
+
+.title-underline {
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+  width: 100px;
+  height: 4px;
+  background-color: #dc143c;
+  border-radius: 2px;
+}

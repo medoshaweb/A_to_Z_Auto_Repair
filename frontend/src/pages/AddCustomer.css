@@ -26,13 +26,14 @@
   margin-bottom: 30px;
   position: relative;
   padding-bottom: 10px;
+  display: inline-block;
   transition: color 0.3s ease;
 }
 
 .title-underline {
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 5px;
   width: 100px;
   height: 4px;
   background-color: #dc143c;
@@ -46,7 +47,8 @@
   box-shadow: 0 2px 10px var(--shadow);
   max-width: 600px;
   border: 1px solid var(--border-color);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .customer-form {
@@ -90,7 +92,7 @@
   border: 1px solid rgba(198, 40, 40, 0.3);
 }
 
-[data-theme='dark'] .error-message {
+[data-theme="dark"] .error-message {
   background-color: rgba(198, 40, 40, 0.2);
   border-color: rgba(198, 40, 40, 0.4);
 }
@@ -132,4 +134,3 @@
     padding: 30px 20px;
   }
 }
-

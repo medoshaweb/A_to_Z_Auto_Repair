@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { customersAPI, servicesAPI, ordersAPI } from "../api";
+import toast from "react-hot-toast";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "./CustomerNewOrder.css";
@@ -29,20 +30,16 @@ const CustomerNewOrder = () => {
   const fetchData = async () => {
     try {
       const [vehiclesRes, servicesRes] = await Promise.all([
-        axios.get(
-          `http://localhost:5000/api/customers/${customer.id}/vehicles`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        ),
-        axios.get("http://localhost:5000/api/services"),
+        customersAPI.getVehicles(customer.id),
+        servicesAPI.getAll(),
       ]);
 
-      setVehicles(vehiclesRes.data.vehicles);
-      setServices(servicesRes.data.services);
+      setVehicles(vehiclesRes.vehicles);
+      setServices(servicesRes.services);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setError("Failed to load data. Please try again.");
+      setError(error.message || "Failed to load data. Please try again.");
+      toast.error("Failed to load data. Please try again.");
     }
   };
 
@@ -92,22 +89,18 @@ const CustomerNewOrder = () => {
       });
 
       // Create the order - backend will use authenticated customer from token
-      const orderResponse = await axios.post(
-        "http://localhost:5000/api/orders",
-        {
-          customer_id: customer.id,
-          vehicle_id: selectedVehicle ? parseInt(selectedVehicle) : null,
-          description: description || null,
-          service_ids: serviceIds.length > 0 ? serviceIds : null,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const orderResponse = await ordersAPI.create({
+        customer_id: customer.id,
+        vehicle_id: selectedVehicle ? parseInt(selectedVehicle) : null,
+        description: description || null,
+        service_ids: serviceIds.length > 0 ? serviceIds : null,
+      });
 
-      console.log("Order created successfully:", orderResponse.data);
-      alert("Service request submitted successfully!");
-      navigate("/customer/dashboard");
+      console.log("Order created successfully:", orderResponse);
+      toast.success("Service request submitted successfully!");
+      setTimeout(() => {
+        navigate("/customer/dashboard");
+      }, 500);
     } catch (err) {
       console.error("Order submission error:", err);
       console.error("Error details:", err.response?.data);

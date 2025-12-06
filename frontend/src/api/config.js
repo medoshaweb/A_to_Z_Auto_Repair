@@ -15,14 +15,37 @@ const api = axios.create({
 // Request interceptor - Add auth token to requests
 api.interceptors.request.use(
   (config) => {
-    // Get token from localStorage
+    // Get tokens from localStorage
     const token = localStorage.getItem('token');
     const customerToken = localStorage.getItem('customerToken');
 
-    // Add token to headers if available
-    if (token) {
+    // Determine which token to use based on the route
+    const url = config.url || '';
+    const method = (config.method || '').toLowerCase();
+    
+    // Check if this is a customer route that requires customerToken
+    // Pattern: /customers/:id/vehicles or /customers/:id/orders
+    const isCustomerSpecificRoute = /\/customers\/\d+\/(vehicles|orders)/.test(url);
+    const isCustomerOrderCreate = url === '/orders' && method === 'post';
+    const isRecommendationRoute = url.includes('/recommendations');
+    const isChatbotRoute = url.includes('/chatbot');
+    
+    const needsCustomerToken = isCustomerSpecificRoute || isCustomerOrderCreate || 
+                               isRecommendationRoute || isChatbotRoute;
+
+    // Use appropriate token based on route
+    if (needsCustomerToken) {
+      if (customerToken) {
+        config.headers.Authorization = `Bearer ${customerToken}`;
+      } else {
+        // Don't add token if customerToken is required but not available
+        console.warn('Customer route requires customerToken but none found:', url);
+      }
+    } else if (token) {
+      // Use admin token for admin routes
       config.headers.Authorization = `Bearer ${token}`;
     } else if (customerToken) {
+      // Fallback: use customer token if no admin token
       config.headers.Authorization = `Bearer ${customerToken}`;
     }
 

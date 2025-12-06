@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { customersAPI } from "../api";
+import toast from "react-hot-toast";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "./AddVehicle.css";
@@ -48,20 +49,16 @@ const CustomerAddVehicle = () => {
     }
 
     try {
-      await axios.post(
-        `http://localhost:5000/api/customers/${customer.id}/vehicles`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      alert("Vehicle added successfully!");
-      navigate("/customer/dashboard");
+      await customersAPI.addVehicle(customer.id, formData);
+      toast.success("Vehicle added successfully!");
+      setTimeout(() => {
+        navigate("/customer/dashboard");
+      }, 500);
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Failed to add vehicle. Please try again."
-      );
+      const errorMessage =
+        err.message || "Failed to add vehicle. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
