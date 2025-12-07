@@ -1,5 +1,8 @@
 const pool = require("../config/database");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// Initialize Stripe only if secret key is provided
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? require("stripe")(process.env.STRIPE_SECRET_KEY)
+  : null;
 
 // Create payment intent (Stripe)
 const createPaymentIntent = async (req, res) => {
@@ -41,6 +44,17 @@ const createPaymentIntent = async (req, res) => {
 
     // Create Stripe payment intent
     let paymentIntent;
+    
+    // If Stripe is not configured, return mock payment intent
+    if (!stripe || !process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === "") {
+      return res.json({
+        clientSecret: "mock_payment_intent_secret",
+        paymentIntentId: `mock_${Date.now()}`,
+        amount: order.total_amount,
+        message: "Stripe not configured. Using mock payment for development.",
+      });
+    }
+
     try {
       paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents,
@@ -54,19 +68,6 @@ const createPaymentIntent = async (req, res) => {
       });
     } catch (stripeError) {
       console.error("Stripe error:", stripeError);
-      // If Stripe is not configured, return mock payment intent
-      if (
-        !process.env.STRIPE_SECRET_KEY ||
-        process.env.STRIPE_SECRET_KEY === ""
-      ) {
-        return res.json({
-          clientSecret: "mock_payment_intent_secret",
-          paymentIntentId: `mock_${Date.now()}`,
-          amount: order.total_amount,
-          message:
-            "Stripe not configured. Using mock payment for development.",
-        });
-      }
       return res.status(500).json({
         message: "Payment processing error",
         error: stripeError.message,
@@ -103,31 +104,32 @@ const confirmPayment = async (req, res) => {
 
     // Verify payment intent with Stripe
     let paymentIntent;
-    try {
-      if (
-        paymentIntentId &&
-        paymentIntentId.startsWith("mock_") &&
-        (!process.env.STRIPE_SECRET_KEY ||
-          process.env.STRIPE_SECRET_KEY === "")
-      ) {
-        // Mock payment for development
-        paymentIntent = {
-          id: paymentIntentId,
-          status: "succeeded",
-          amount: 0,
-        };
-      } else if (process.env.STRIPE_SECRET_KEY) {
+    
+    // Handle mock payments
+    if (
+      paymentIntentId &&
+      paymentIntentId.startsWith("mock_") &&
+      (!stripe || !process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === "")
+    ) {
+      // Mock payment for development
+      paymentIntent = {
+        id: paymentIntentId,
+        status: "succeeded",
+        amount: 0,
+      };
+    } else if (stripe && process.env.STRIPE_SECRET_KEY) {
+      try {
         paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-      } else {
+      } catch (stripeError) {
+        console.error("Stripe verification error:", stripeError);
         return res.status(400).json({
-          message: "Stripe not configured. Cannot verify payment.",
+          message: "Invalid payment intent",
+          error: stripeError.message,
         });
       }
-    } catch (stripeError) {
-      console.error("Stripe verification error:", stripeError);
+    } else {
       return res.status(400).json({
-        message: "Invalid payment intent",
-        error: stripeError.message,
+        message: "Stripe not configured. Cannot verify payment.",
       });
     }
 
@@ -221,6 +223,10 @@ const getPaymentHistory = async (req, res) => {
 
 // Stripe webhook handler
 const handleStripeWebhook = async (req, res) => {
+  if (!stripe || !process.env.STRIPE_SECRET_KEY) {
+    return res.status(400).json({ message: "Stripe not configured" });
+  }
+
   const sig = req.headers["stripe-signature"];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
