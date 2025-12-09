@@ -99,7 +99,10 @@ const HomePage = () => {
             Comprehensive automotive solutions for all your vehicle needs
           </p>
           <div className="services-grid">
-            <div className="service-card">
+            <div 
+              className="service-card" 
+              onClick={handleScheduleService}
+            >
               <div className="service-icon">🔧</div>
               <h3>Engine Service & Repair</h3>
               <p>
@@ -107,7 +110,10 @@ const HomePage = () => {
                 your vehicle running smoothly.
               </p>
             </div>
-            <div className="service-card">
+            <div 
+              className="service-card" 
+              onClick={handleScheduleService}
+            >
               <div className="service-icon">🛠</div>
               <h3>Brake Repair & Service</h3>
               <p>
@@ -115,7 +121,10 @@ const HomePage = () => {
                 your safety on the road.
               </p>
             </div>
-            <div className="service-card">
+            <div 
+              className="service-card" 
+              onClick={handleScheduleService}
+            >
               <div className="service-icon">⚙️</div>
               <h3>Transmission Service</h3>
               <p>
@@ -123,7 +132,10 @@ const HomePage = () => {
                 services to ensure optimal performance.
               </p>
             </div>
-            <div className="service-card">
+            <div 
+              className="service-card" 
+              onClick={handleScheduleService}
+            >
               <div className="service-icon">
                 <FaCarBattery />
               </div>
@@ -133,7 +145,10 @@ const HomePage = () => {
                 wiring repairs.
               </p>
             </div>
-            <div className="service-card">
+            <div 
+              className="service-card" 
+              onClick={handleScheduleService}
+            >
               <div className="service-icon">
                 <GiFlatTire />
               </div>
@@ -143,7 +158,10 @@ const HomePage = () => {
                 services.
               </p>
             </div>
-            <div className="service-card">
+            <div 
+              className="service-card" 
+              onClick={handleScheduleService}
+            >
               <div className="service-icon">💨</div>
               <h3>AC & Heating</h3>
               <p>

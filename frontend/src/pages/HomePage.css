@@ -198,11 +198,18 @@
   text-align: center;
   transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s ease, border-color 0.3s ease;
   border: 1px solid var(--border-color);
+  cursor: pointer;
+  position: relative;
 }
 
 .service-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #d32f2f;
+}
+
+.service-card:active {
+  transform: translateY(-2px);
 }
 
 .service-icon {
