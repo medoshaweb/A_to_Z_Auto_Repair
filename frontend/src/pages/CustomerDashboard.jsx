@@ -157,7 +157,8 @@ const CustomerDashboard = () => {
               <section className="customer-section recommendations-section">
                 <h2>💡 Recommended Services</h2>
                 <p className="recommendations-intro">
-                  Based on your vehicle's mileage and service history, we recommend:
+                  Based on your vehicle's mileage and service history, we
+                  recommend:
                 </p>
                 <div className="recommendations-grid">
                   {recommendations.map((rec, idx) => (
@@ -177,7 +178,11 @@ const CustomerDashboard = () => {
                       </p>
                       <button
                         className="recommendation-btn"
-                        onClick={() => navigate("/customer/orders/new")}
+                        onClick={() =>
+                          navigate("/customer/orders/new", {
+                            state: { recommendedService: rec.service },
+                          })
+                        }
                       >
                         Request This Service
                       </button>

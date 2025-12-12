@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { customersAPI, servicesAPI, ordersAPI } from "../api";
 import toast from "react-hot-toast";
 import Header from "../components/Header";
@@ -8,6 +8,8 @@ import "./CustomerNewOrder.css";
 
 const CustomerNewOrder = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const recommendedService = location.state?.recommendedService;
   const customer = JSON.parse(localStorage.getItem("customer") || "null");
   const token = localStorage.getItem("customerToken");
 
@@ -18,6 +20,7 @@ const CustomerNewOrder = () => {
   const [description, setDescription] = useState("");
   const [preferredDate, setPreferredDate] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
+  const [appliedRecommendation, setAppliedRecommendation] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -28,6 +31,22 @@ const CustomerNewOrder = () => {
     }
     fetchData();
   }, [customer, token]);
+
+  // Auto-select recommended service if user came from dashboard recommendation
+  useEffect(() => {
+    if (!services.length || !recommendedService || appliedRecommendation)
+      return;
+    const match = services.find(
+      (svc) => svc.name.toLowerCase() === recommendedService.toLowerCase()
+    );
+    if (match) {
+      setSelectedServices((prev) =>
+        prev.includes(match.id) ? prev : [...prev, match.id]
+      );
+      setAppliedRecommendation(true);
+      toast.success(`Added recommended service: ${match.name}`);
+    }
+  }, [services, recommendedService, appliedRecommendation]);
 
   const fetchData = async () => {
     try {
@@ -138,7 +157,6 @@ const CustomerNewOrder = () => {
             <span className="title-underline"></span>
           </h1>
 
-
           <div className="form-container">
             <form onSubmit={handleSubmit}>
               {error && <div className="error-message">{error}</div>}
@@ -178,21 +196,21 @@ const CustomerNewOrder = () => {
                   <div className="services-grid">
                     {services.map((service) => (
                       <div key={service.id} className="service-item">
-                      <label className="service-label">
-                        <input
-                          type="checkbox"
-                          checked={selectedServices.includes(service.id)}
-                          onChange={() => handleServiceToggle(service.id)}
-                        />
-                        <div className="service-info">
-                          <strong>{service.name}</strong>
-                          {service.description && (
-                            <p className="service-description">
-                              {service.description}
-                            </p>
-                          )}
-                        </div>
-                      </label>
+                        <label className="service-label">
+                          <input
+                            type="checkbox"
+                            checked={selectedServices.includes(service.id)}
+                            onChange={() => handleServiceToggle(service.id)}
+                          />
+                          <div className="service-info">
+                            <strong>{service.name}</strong>
+                            {service.description && (
+                              <p className="service-description">
+                                {service.description}
+                              </p>
+                            )}
+                          </div>
+                        </label>
                       </div>
                     ))}
                   </div>
