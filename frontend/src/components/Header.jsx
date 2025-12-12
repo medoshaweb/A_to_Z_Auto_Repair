@@ -27,7 +27,7 @@ const Header = () => {
       <div className="top-bar">
         <div className="top-bar-left-section">
         <div className="top-bar-left">
-          <span>Services Beyond Expectation</span>
+          <span>Service Beyond Expectation</span>
         </div>
         
         <div className="top-bar-left2">
